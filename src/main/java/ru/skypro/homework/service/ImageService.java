@@ -41,18 +41,16 @@ public class ImageService {
     }
 
     public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
-        Integer id = userRepository.findUserByEmailIs(email).get().getId();
-        log.info("Was invoked method to upload photo to user with id {}", id);
+        Optional<User> user = userRepository.findUserByEmailIs(email);
+        if (!user.isPresent()) {
+            throw new IllegalArgumentException("User not found");
+        }
+        log.info("Was invoked method to upload photo to user with id {}", user.get().getId());
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
-        if (!userRepository.existsById(Long.valueOf(id))) {
-            throw new IllegalArgumentException("User not found");
-        }
-        User user = userRepository.findById(id).get();
         Image imageToSave = new Image();
-        imageToSave.setId(id);
-        imageToSave.setUser(user);
+        imageToSave.setUser(user.get());
         imageToSave.setPreview(file.getBytes());
         imageRepository.save(imageToSave);
         return imageToSave.getPreview();

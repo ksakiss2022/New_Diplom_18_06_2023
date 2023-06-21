@@ -1,6 +1,5 @@
 package ru.skypro.homework.model;
 import lombok.*;
-import org.hibernate.Hibernate;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;

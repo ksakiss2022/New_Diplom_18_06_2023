@@ -1,7 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.*;
-import org.hibernate.Hibernate;
+
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -17,7 +17,6 @@ public class Ads {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    //private Long id;
     private BigDecimal price;
     private String title;
     @ManyToOne(fetch = FetchType.LAZY)

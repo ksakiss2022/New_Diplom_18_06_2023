@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.dto.UserDto;
@@ -14,24 +16,31 @@ import java.util.Optional;
 @Service
 @Transactional
 @Slf4j
+@Primary
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository) {
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
-    public UserDto update(UserDto userDto, String email) {
-        User updatedUser = UserMapper.INSTANCE.userDtoToUser(userDto);
-        log.info("Update user: " + updatedUser);
-        return UserMapper.INSTANCE.userToUserDto(userRepository.save(updatedUser));
+    public UserDto update(UserDto user, String email) {
+        log.info("Update user: " + user);
+        User user1 = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User updatedUser = userMapper.userDtoToUser(user);
+        updatedUser.setId(user1.getId());
+        return userMapper.userToUserDto(userRepository.save(updatedUser));
     }
 
     @Override
     public Optional<UserDto> getUser(String email) {
         log.info("Get user: " + email);
-        return userRepository.findUserByEmailIs(email).map(UserMapper.INSTANCE::userToUserDto);
+        return userRepository.findUserByEmailIs(email).map(user -> userMapper.userToUserDto(user));
     }
 
     @Override
@@ -40,8 +49,8 @@ public class UserServiceImpl implements UserService {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("User not found");
         }
-        return UserMapper.INSTANCE.userToUserDto(
-                userRepository.save(UserMapper.INSTANCE.userDtoToUser(user))
+        return userMapper.userToUserDto(
+                userRepository.save(userMapper.userDtoToUser(user))
         );
     }
 }
