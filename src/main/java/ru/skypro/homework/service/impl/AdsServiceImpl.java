@@ -23,26 +23,30 @@ public class AdsServiceImpl implements AdsService {
     private final AdsRepository adsRepository;
     private final ImageService imageService;
     private final UserRepository userRepository;
+    private final AdsMapper adsMapper;
 
-    public AdsServiceImpl(AdsRepository adsRepository, ImageService imageService, UserRepository userRepository) {
+
+    public AdsServiceImpl(AdsRepository adsRepository, ImageService imageService, UserRepository userRepository, AdsMapper adsMapper) {
         this.adsRepository = adsRepository;
         this.imageService = imageService;
         this.userRepository = userRepository;
+        this.adsMapper = adsMapper;
     }
 
     @Override
     public Collection<AdsDto> getAllAds() {
         Collection<Ads> ads = adsRepository.findAll();
         log.info("Get all ads: " + ads);
-        return AdsMapper.INSTANCE.adsCollectionToAdsDto(ads);
+        return adsMapper.adsCollectionToAdsDto(ads);
     }
+
     @Override
     public AdsDto addAd(AdsDto adsDto, MultipartFile image) throws IOException {
-        Ads newAds = AdsMapper.INSTANCE.adsDtoToAds(adsDto);
+        Ads newAds = adsMapper.adsDtoToAds(adsDto);
         log.info("Save ads: " + newAds);
         imageService.saveImage(newAds.getId(), image);
         log.info("Photo have been saved");
-        return AdsMapper.INSTANCE.adsToAdsDto(Optional.of(newAds));
+        return adsMapper.adsToAdsDto(newAds);
     }
 
     @Override
@@ -50,19 +54,13 @@ public class AdsServiceImpl implements AdsService {
         return Optional.empty();
     }
 
+
     @Override
     public Optional<AdsDto> getAds(Long id) {
         Optional<Ads> ads = adsRepository.findById(id);
         log.info("Get ads: " + ads);
-        return Optional.of(AdsMapper.INSTANCE.adsToAdsDto(ads));
+        return ads.map(adsMapper::adsToAdsDto);
     }
-
-//    @Override
-//    public Optional<AdsDto> getAds(Integer id) {
-//        Ads ads = adsRepository.findById(id);
-//        log.info("Get ads: " + ads);
-//        return Optional.of(AdsMapper.INSTANCE.adsToAdsDto(ads));
-//    }
 
     @Override
     public boolean removeAd(Long id) {
@@ -71,11 +69,12 @@ public class AdsServiceImpl implements AdsService {
         return false;
     }
 
+
     @Override
     public AdsDto updateAds(AdsDto adsDto, Long id) {
-        Ads ads = AdsMapper.INSTANCE.adsDtoToAds(adsDto);
+        Ads ads = adsMapper.adsDtoToAds(adsDto);
         log.info("Update ads: " + ads);
-        return AdsMapper.INSTANCE.adsToAdsDto(Optional.of(adsRepository.save(ads)));
+        return adsMapper.adsToAdsDto(adsRepository.save(ads));
     }
 
     @Override
@@ -83,7 +82,7 @@ public class AdsServiceImpl implements AdsService {
         log.info("Get ads: " + email);
         Integer authorId = userRepository.findByEmail(email).get().getId();
         Collection<Ads> ads = adsRepository.findAllByAuthorId(Long.valueOf(authorId));
-        return ads.isEmpty() ? null : AdsMapper.INSTANCE.adsCollectionToAdsDto(ads);
+        return ads.isEmpty() ? null : adsMapper.adsCollectionToAdsDto(ads);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.dto.CommentDto;
@@ -9,7 +10,6 @@ import ru.skypro.homework.repositories.CommentRepository;
 import ru.skypro.homework.service.CommentService;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 @Transactional
@@ -22,18 +22,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
+    @Autowired
+    private CommentMapper commentMapper;
+
     @Override
     public Collection<CommentDto> getComments() {
         Collection<Comment> comments = commentRepository.findAll();
         log.info("Get all comments: " + comments);
-        return CommentMapper.INSTANCE.commentCollectionToCommentDto(comments);
+        return commentMapper.commentCollectionToCommentDto(comments);
     }
 
     @Override
     public CommentDto addComment(CommentDto commentDto) {
-        Comment newComment = CommentMapper.INSTANCE.INSTANCE.commentDtoToComment(commentDto);
+        Comment newComment = commentMapper.commentDtoToComment(commentDto);
         log.info("Save comment: " + newComment);
-        return CommentMapper.INSTANCE.INSTANCE.commentToCommentDto(newComment);
+        return commentMapper.commentToCommentDto(newComment);
     }
 
     @Override
@@ -50,8 +53,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto updateComment(CommentDto commentDto, Long id) {
-        Comment comment = CommentMapper.INSTANCE.INSTANCE.commentDtoToComment(commentDto);
+        Comment comment = commentMapper.commentDtoToComment(commentDto);
         log.info("Update comment: " + comment);
-        return CommentMapper.INSTANCE.INSTANCE.commentToCommentDto(commentRepository.save(comment));
+        return commentMapper.commentToCommentDto(commentRepository.save(comment));
     }
 }
