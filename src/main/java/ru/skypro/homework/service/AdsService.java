@@ -1,15 +1,19 @@
 package ru.skypro.homework.service;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
+import ru.skypro.homework.mappers.AdsMapper;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
+
 public interface AdsService {
+
 
     public Collection<AdsDto> getAllAds();
 

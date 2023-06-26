@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +28,9 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/ads")//указывает, что все операции контроллера будут обрабатываться по пути /ads.
 @CrossOrigin(value = "http://localhost:3000")//включает поддержку CORS на уровне контроллера, что позволяет принимать
 // запросы из указанного источника (по адресу http://localhost:3000).
+@RequiredArgsConstructor
 public class AdsController {
     private final AdsService adsService;
-
-    public AdsController(AdsService adsService) {
-        this.adsService = adsService;
-    }
 
     //операция "getAllAds" предназначена для получения списка всех объявлений. Для этого используется GET-запрос на путь
     // /ads. В ответ сервер возвращает массив объектов AdsDto в формате JSON.
