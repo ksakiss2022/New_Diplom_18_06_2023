@@ -1,6 +1,5 @@
 package ru.skypro.homework.service.impl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.dto.CommentDto;
@@ -16,14 +15,14 @@ import java.util.Collection;
 @Slf4j
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
-    public CommentServiceImpl(CommentRepository commentRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
+        this.commentMapper = commentMapper;
     }
 
 
-    @Autowired
-    private CommentMapper commentMapper;
 
     @Override
     public Collection<CommentDto> getComments() {
