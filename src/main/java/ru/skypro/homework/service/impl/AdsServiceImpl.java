@@ -1,6 +1,10 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,19 +23,15 @@ import java.util.Optional;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
+@Component
+
 public class AdsServiceImpl implements AdsService {
     private final AdsRepository adsRepository;
     private final ImageService imageService;
     private final UserRepository userRepository;
     private final AdsMapper adsMapper;
 
-
-    public AdsServiceImpl(AdsRepository adsRepository, ImageService imageService, UserRepository userRepository, AdsMapper adsMapper) {
-        this.adsRepository = adsRepository;
-        this.imageService = imageService;
-        this.userRepository = userRepository;
-        this.adsMapper = adsMapper;
-    }
 
     @Override
     public Collection<AdsDto> getAllAds() {
@@ -92,4 +92,5 @@ public class AdsServiceImpl implements AdsService {
         log.info("Photo have been saved");
         return image.getBytes();
     }
+
 }

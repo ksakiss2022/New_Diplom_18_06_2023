@@ -17,7 +17,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private LocalDateTime createdAt;
+    private Long createdAt;
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)

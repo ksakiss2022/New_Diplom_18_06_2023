@@ -1,3 +1,4 @@
 databaseChangeLog:
   - include:
+<<<<<<< HEAD
       file: liquibase/scripts/diplom.sql

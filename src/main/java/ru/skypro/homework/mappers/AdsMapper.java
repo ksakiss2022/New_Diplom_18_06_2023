@@ -24,4 +24,6 @@ public interface AdsMapper {
     Ads adsDtoToAds(AdsDto adsDto);
 
     Collection<AdsDto> adsCollectionToAdsDto(Collection<Ads> adsCollection);
+
+
 }
