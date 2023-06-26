@@ -14,7 +14,7 @@ import java.util.Collection;
 public interface AdsMapper {
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(target = "image", expression = "java(ads.getImage().getFilePath())")
+    @Mapping(target = "image", expression = "java(ads.getImage().getPreview().toString())")
     @Mapping(target = "author", expression = "java(ads.getAuthorId().getId())")
     AdsDto adsToAdsDto(Ads ads);
 
