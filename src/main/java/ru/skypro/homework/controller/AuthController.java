@@ -16,9 +16,9 @@ import ru.skypro.homework.service.AuthService;
 import static ru.skypro.homework.dto.Role.USER;
 
 @Slf4j
-@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(value = "http://localhost:3000")
 public class AuthController {
 
     private final AuthService authService;

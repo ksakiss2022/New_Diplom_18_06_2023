@@ -28,7 +28,10 @@ public class Image {
     @OneToOne(optional = true)
     @JoinColumn(referencedColumnName = "id")
     private User user;
-
+    public String getFilePath() {
+        // implement logic to return the file path of the image
+        return null;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

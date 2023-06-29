@@ -26,9 +26,9 @@ import javax.validation.constraints.Positive;
 @RestController
 // означает, что данный класс является контроллером, который обрабатывает REST-запросы и возвращает JSON-ответы
 @RequestMapping("/ads")//указывает, что все операции контроллера будут обрабатываться по пути /ads.
+@RequiredArgsConstructor
 @CrossOrigin(value = "http://localhost:3000")//включает поддержку CORS на уровне контроллера, что позволяет принимать
 // запросы из указанного источника (по адресу http://localhost:3000).
-@RequiredArgsConstructor
 public class AdsController {
     private final AdsService adsService;
 

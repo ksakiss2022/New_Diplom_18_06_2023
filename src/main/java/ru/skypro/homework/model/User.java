@@ -27,6 +27,7 @@ public class User {
     private Role role;
     @OneToOne(mappedBy = "user")
     private Image avatar;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

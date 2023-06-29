@@ -26,7 +26,6 @@ import ru.skypro.homework.dto.UserDto;
 @RequestMapping("/users")// устанавливает базовый URL-адрес для всех методов, которые обрабатываются этим контроллером.
 @RequiredArgsConstructor
 @CrossOrigin(value = "http://localhost:3000")//определяет адреса и порты, с которых будет доступен данный ресурс.
-
 public class UserController {
     private final UserService userService;// внедряется UserService, который содержит бизнес-логику, связанную с пользователями.
 
