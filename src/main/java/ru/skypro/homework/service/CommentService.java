@@ -1,18 +1,21 @@
 package ru.skypro.homework.service;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CommentDto;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public interface CommentService {public Iterable<CommentDto> getComments();
 
-    public CommentDto addComment(CommentDto commentDto) throws IOException;
+Collection<CommentDto> getComments(Integer id);
 
-    public boolean deleteComment(Long id);
+    CommentDto addComment(Integer id, CommentDto commentDto, Authentication authentication) throws IOException;
 
-    boolean deleteComment(Integer id);
+    boolean deleteComment(Integer adId, Integer id);
 
-    public CommentDto updateComment(CommentDto commentDto, Long id);
+    CommentDto updateComment(Integer adId, CommentDto commentDto, Integer id, Authentication authentication) throws IOException;
 }
