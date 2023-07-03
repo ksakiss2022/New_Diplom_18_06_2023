@@ -22,7 +22,6 @@ import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Optional;
 
 @Slf4j

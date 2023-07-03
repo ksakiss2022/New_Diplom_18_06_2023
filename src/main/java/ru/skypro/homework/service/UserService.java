@@ -7,9 +7,6 @@ import ru.skypro.homework.dto.UserDto;
 import java.security.Principal;
 import java.util.Optional;
 
-
-import java.util.Optional;
-
 @Service
 public interface UserService {
 

@@ -6,12 +6,12 @@ import ru.skypro.homework.dto.CommentDto;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 @Service
-public interface CommentService {public Iterable<CommentDto> getComments();
+public interface CommentService {
+    public Iterable<CommentDto> getComments();
 
-Collection<CommentDto> getComments(Integer id);
+    Collection<CommentDto> getComments(Integer id);
 
     CommentDto addComment(Integer id, CommentDto commentDto, Authentication authentication) throws IOException;
 
