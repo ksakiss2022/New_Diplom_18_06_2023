@@ -1,4 +1,5 @@
 package ru.skypro.homework.controller;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,8 +16,6 @@ import ru.skypro.homework.dto.ResponseWrapper;
 import ru.skypro.homework.service.CommentService;
 
 import java.io.IOException;
-import java.util.Collection;
-
 
 @RestController
 @RequestMapping("/ads")
