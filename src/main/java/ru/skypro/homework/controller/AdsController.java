@@ -10,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
@@ -21,7 +24,14 @@ import ru.skypro.homework.service.ImageService;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Collection;
 
+/*
+ * Класс AdsController является контроллером, который отвечает за обработку HTTP-запросов,
+ *  связанных с объявлениями. Он содержит различные методы, которые позволяют получать,
+ * добавлять, обновлять и удалять объявления. Класс также использует AdsService и
+ * ImageService для выполнения операций с объявлениями и изображениями соответственно.
+ * */
 @Slf4j
 @RestController
 @RequestMapping("/ads")
@@ -43,9 +53,25 @@ public class AdsController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }
     )
-    @GetMapping
-    public ResponseEntity<Iterable<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
-        return ResponseEntity.ok(adsService.getAllAds(title));
+    /**
+     *- getAllAds: Метод для получения всех объявлений. Принимает необязательный параметр "title",
+     * который используется для фильтрации объявлений по заголовку. Возвращает ResponseEntity,
+     * содержащий список объявлений (AdsDto).
+     */
+
+//    @GetMapping
+//    public ResponseEntity<Iterable<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
+//        return ResponseEntity.ok(adsService.getAllAds(title));
+//    }
+    @GetMapping("/ads")
+    public ResponseEntity<Collection<AdsDto>> getAllAds(@RequestParam(required = false) String title, Authentication authentication) {
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            Collection<AdsDto> ads = adsService.getAllAdsForAnonymous(title);
+            return ResponseEntity.ok(ads);
+        } else {
+            Collection<AdsDto> ads = adsService.getAllAds(title);
+            return ResponseEntity.ok(ads);
+        }
     }
 
     @Operation(
@@ -60,6 +86,11 @@ public class AdsController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }
     )
+    /**
+     * - addAd: Метод для добавления нового объявления. Принимает параметры аутентификации (authentication),
+     *изображение (image) и свойства объявления (properties). Возвращает ResponseEntity, содержащий
+     *  добавленное объявление (AdsDto).
+     */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAd(Authentication authentication,
                                         @RequestPart("image") MultipartFile image,
@@ -81,6 +112,10 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
+    /**
+     * getAds: Метод для получения информации об объявлении по его ID. Принимает ID объявления (id) в качестве пути.
+     * Возвращает ResponseEntity, содержащий информацию об объявлении (AdsDtoFull).
+     */
     @GetMapping("/{id}")
     public ResponseEntity<AdsDtoFull> getAds(@Parameter(description = "Id объявления") @PathVariable Integer id) {
         log.info("Get ads: " + id);
@@ -98,8 +133,15 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
+    /**
+     * - removeAd: Метод для удаления объявления по его ID. Принимает ID объявления (id) в качестве пути.
+     * Возвращает ResponseEntity типа Void. Если объявление успешно удалено, возвращается статус NO_CONTENT.
+     * Если объявление не найдено, возвращается статус NOT_FOUND.
+     */
+
+    @PreAuthorize("hasAuthority('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeAd(@Parameter(description = "Id объявления") @PathVariable Integer id) {
+    public ResponseEntity<Void> removeAd(@PathVariable Integer id) {
         boolean result = adsService.removeAd(id);
         if (result) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -121,6 +163,12 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
+    /**
+     * - updateAds: Метод для обновления информации об объявлении. Принимает ID объявления (id) в качестве пути и
+     * обновленные свойства объявления (AdsDto). Возвращает ResponseEntity, содержащий обновленную информацию об
+     * объявлении (AdsDto).
+     */
+    @PreAuthorize("hasAuthority('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@RequestBody AdsDto ads, @PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(adsService.updateAds(ads, id));
@@ -139,13 +187,21 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
+    /**
+     *
+     Метод getMe:
+
+     Этот метод позволяет получить объявления авторизованного пользователя. Принимает параметр аутентификации
+     (authentication), содержащий информацию о текущем пользователе. Метод использует AdsService для получения
+     объявлений пользователя и возвращает ResponseEntity, содержащий результат в виде ResponseWrapper<AdsDto>.
+     ResponseWrapper используется для обертки данных и передачи дополнительной информации, такой как статус запроса.
+     */
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapper<AdsDto>> getMe(@NotNull Authentication authentication) {
         log.info("Get me: " + authentication.getName());
         ResponseWrapper<AdsDto> ads = new ResponseWrapper<>(adsService.getMe(authentication.getName()));
         return ResponseEntity.ok(ads);
     }
-
 
     @Operation(
             operationId = "updateImage",
@@ -161,15 +217,44 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
+    /**
+     * updateImage:
+     *
+     * Этот метод позволяет обновить картинку объявления. Принимает ID объявления (id) в качестве пути и новое
+     * изображение (image) в виде MultipartFile. Метод использует AdsService для обновления изображения объявления
+     * и возвращает ResponseEntity типа byte[], содержащий обновленное изображение.
+     */
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
                                               @RequestParam("image") MultipartFile image) throws IOException {
         return ResponseEntity.status(HttpStatus.OK).body(adsService.updateImage(id, image));
     }
 
+    /**
+     * getImage:
+     * <p>
+     * Этот метод позволяет получить изображение объявления по его ID. Принимает ID объявления (id) в качестве пути.
+     * Метод использует ImageService для получения изображения и возвращает ResponseEntity типа byte[],
+     * содержащий изображение.
+     *
+     * @param id
+     * @return
+     */
     @GetMapping(value = "/{id}/getImage")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) {
         log.info("Get image from ads with id " + id);
         return ResponseEntity.ok(imageService.getImage(id));
+    }
+
+    @GetMapping("/ads")
+    public ResponseEntity<Collection<AdsDto>> getAllAds1(@RequestParam(required = false) String title) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            Collection<AdsDto> ads = adsService.getAllAdsForAnonymous(title);
+            return ResponseEntity.ok(ads);
+        } else {
+            Collection<AdsDto> ads = adsService.getAllAds(title);
+            return ResponseEntity.ok(ads);
+        }
     }
 }

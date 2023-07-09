@@ -10,12 +10,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Класс BasicAuthCorsFilter выполняет фильтрацию запросов и добавляет необходимый заголовок для поддержки CORS,
- * разрешая передачу учетных данных при выполнении запросов с других источников.
+ Класс BasicAuthCorsFilter является фильтром, который применяется один раз для каждого HTTP-запроса.
+ Он отвечает за добавление заголовка Access-Control-Allow-Credentials в ответ, чтобы разрешить
+ передачу учетных данных (cookies, authorization headers и т.д.) через кросс-доменные запросы.
+ В данном случае, фильтр просто добавляет заголовок без какой-либо проверки или обработки запроса.
  */
 @Component
 public class BasicAuthCorsFilter extends OncePerRequestFilter {
-
+    /**
+     * doFilterInternal: Метод, который предоставляется для подклассов с целью выполнения
+     * фактической работы фильтра. В данном случае, метод добавляет заголовок
+     * Access-Control-Allow-Credentials со значением "true" в ответе и передает
+     * управление следующему фильтру в цепочке, используя объект FilterChain.
+     * @param httpServletRequest объект HttpServletRequest, представляющий HTTP-запрос.
+     * @param httpServletResponse объект HttpServletResponse, представляющий HTTP-ответ.
+     * @param filterChain объект FilterChain, который используется для передачи управления следующему фильтру в цепочке.
+     * @throws ServletException /ServletException, IOException: может вызывать исключение ServletException,
+     * IOException при обработке запроса.
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,
