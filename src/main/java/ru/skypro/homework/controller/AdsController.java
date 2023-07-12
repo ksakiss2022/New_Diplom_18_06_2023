@@ -59,19 +59,14 @@ public class AdsController {
      * содержащий список объявлений (AdsDto).
      */
 
-//    @GetMapping
+//    @GetMapping("/ads")
 //    public ResponseEntity<Iterable<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
 //        return ResponseEntity.ok(adsService.getAllAds(title));
 //    }
     @GetMapping("/ads")
-    public ResponseEntity<Collection<AdsDto>> getAllAds(@RequestParam(required = false) String title, Authentication authentication) {
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            Collection<AdsDto> ads = adsService.getAllAdsForAnonymous(title);
-            return ResponseEntity.ok(ads);
-        } else {
-            Collection<AdsDto> ads = adsService.getAllAds(title);
-            return ResponseEntity.ok(ads);
-        }
+    public ResponseEntity<Collection<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
+        Collection<AdsDto> ads = adsService.getAllAdsForAnonymous(title);
+        return ResponseEntity.ok(ads);
     }
 
     @Operation(
@@ -139,7 +134,7 @@ public class AdsController {
      * Если объявление не найдено, возвращается статус NOT_FOUND.
      */
 
-    @PreAuthorize("hasAuthority('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeAd(@PathVariable Integer id) {
         boolean result = adsService.removeAd(id);
@@ -168,7 +163,7 @@ public class AdsController {
      * обновленные свойства объявления (AdsDto). Возвращает ResponseEntity, содержащий обновленную информацию об
      * объявлении (AdsDto).
      */
-    @PreAuthorize("hasAuthority('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@RequestBody AdsDto ads, @PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(adsService.updateAds(ads, id));
@@ -246,15 +241,15 @@ public class AdsController {
         return ResponseEntity.ok(imageService.getImage(id));
     }
 
-    @GetMapping("/ads")
-    public ResponseEntity<Collection<AdsDto>> getAllAds1(@RequestParam(required = false) String title) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            Collection<AdsDto> ads = adsService.getAllAdsForAnonymous(title);
-            return ResponseEntity.ok(ads);
-        } else {
-            Collection<AdsDto> ads = adsService.getAllAds(title);
-            return ResponseEntity.ok(ads);
-        }
-    }
+//    @GetMapping("/ads")
+//    public ResponseEntity<Collection<AdsDto>> getAllAds1(@RequestParam(required = false) String title) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+//            Collection<AdsDto> ads = adsService.getAllAdsForAnonymous(title);
+//            return ResponseEntity.ok(ads);
+//        } else {
+//            Collection<AdsDto> ads = adsService.getAllAds(title);
+//            return ResponseEntity.ok(ads);
+//        }
+//    }
 }

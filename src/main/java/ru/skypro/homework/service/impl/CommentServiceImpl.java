@@ -105,7 +105,7 @@ public class CommentServiceImpl implements CommentService {
 //        commentRepository.deleteById(id);
 //        return true;
 //    }
-    @PreAuthorize("hasAuthority('ADMIN') or @commentServiceImpl.findCommentById(#id)?.authorId?.email == authentication.name")
+
     @Override
     public boolean deleteComment(Integer adId, Integer id) {
         if (!commentRepository.existsById(id)) {
@@ -139,7 +139,7 @@ public class CommentServiceImpl implements CommentService {
 //        return commentMapper.commentToCommentDto(commentRepository.save(comment));
 //    }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @Override
     public CommentDto updateComment(Integer adId, CommentDto commentDto, Integer commentId, Authentication authentication) {
         log.info("Update comment: " + commentDto);

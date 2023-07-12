@@ -85,7 +85,7 @@ public class CommentController {
      * @return HTTP-ответ с добавленным комментарием
      * @throws IOException если произошла ошибка ввода-ввывода
      */
-    @PreAuthorize("isAuthenticated()")
+
 //    @PostMapping("{id}/comments")
 //    public ResponseEntity<CommentDto> addComment(@PathVariable Integer id, @Parameter(description = "Необходимо корректно" +
 //            " заполнить комментарий", example = "Тест"
@@ -135,7 +135,7 @@ public class CommentController {
 //            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //        }
 //    }
-    @PreAuthorize("hasAuthority('ADMIN') or @commentServiceImpl.findCommentById(#commentId)?.authorId?.email == authentication.name")
+    @PreAuthorize("hasRole('ADMIN') or @commentServiceImpl.findCommentById(#commentId)?.authorId?.email == authentication.name")
     @DeleteMapping("{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
         boolean result = commentService.deleteComment(adId, commentId);
@@ -179,7 +179,8 @@ public class CommentController {
 //        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(adId, commentDto,
 //                commentId, authentication));
 //    }
-    @PreAuthorize("hasAuthority('ADMIN') or @commentServiceImpl.findCommentById(#commentId).authorId.email == authentication.name")
+
+    @PreAuthorize("hasRole('ADMIN') or @commentServiceImpl.findCommentById(#commentId).authorId.email == authentication.name")
     @PatchMapping("{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@RequestBody CommentDto commentDto, @PathVariable Integer adId,
                                                     @PathVariable Integer commentId,
