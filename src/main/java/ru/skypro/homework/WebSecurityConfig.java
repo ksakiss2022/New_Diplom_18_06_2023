@@ -1,25 +1,32 @@
 package ru.skypro.homework;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-//import org.springframework.security.web.SecurityFilterChain;
-//import static org.springframework.security.config.Customizer.withDefaults;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 //
 //@EnableWebSecurity
 //public class WebSecurityConfig {
-//  private static final String[] AUTH_WHITELIST = {
+//
+//  private static final String[] AUTH_WHITELIST = { //  массив URL-шаблонов, которые разрешены без аутентификации.
 //          "/swagger-resources/**",
 //          "/swagger-ui.html",
 //          "/v3/api-docs",
 //          "/webjars/**",
 //          "/login",
-//          "/register"
+//          "/register",
+//          "/ads"
 //  };
+//
 //  @Bean
 //  public InMemoryUserDetailsManager userDetailsService() {
 //    UserDetails user =
@@ -31,6 +38,7 @@ package ru.skypro.homework;
 //                    .build();
 //    return new InMemoryUserDetailsManager(user);
 //  }
+//
 //  @Bean
 //  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //    http.csrf()
@@ -41,17 +49,21 @@ package ru.skypro.homework;
 //                                    .mvcMatchers(AUTH_WHITELIST)
 //                                    .permitAll()
 //                                    .mvcMatchers("/ads/**", "/users/**")
-//                                    .authenticated())
+//                                    .authenticated()
+//            )
 //            .cors()
-//            .disable()
+//            .and()
 //            .httpBasic(withDefaults());
 //    return http.build();
 //  }
+//
 //  @Bean
 //  public PasswordEncoder passwordEncoder() {
 //    return new BCryptPasswordEncoder();
 //  }
+//
 //}
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -61,13 +73,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-  private static final String[] AUTH_WHITELIST = { //  массив URL-шаблонов, которые разрешены без аутентификации.
+  private static final String[] AUTH_WHITELIST = {
           "/swagger-resources/**",
           "/swagger-ui.html",
           "/v3/api-docs",
@@ -90,10 +103,10 @@ public class WebSecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf()
             .disable()
-            .authorizeHttpRequests(
+            .authorizeRequests(
                     (authorization) ->
                             authorization
                                     .mvcMatchers(AUTH_WHITELIST)
