@@ -33,16 +33,14 @@ public class Image {
     @Lob//Аннотация @Lob указывает, что поле preview является большим объектом (LOB),
     // который может храниться в базе данных.
     private byte[] preview;//представляет собой массив байтов, который содержит превью изображения.
-    @OneToOne(optional = true)//указывает, что связь с объявлением является необязательной, то есть изображение может
-    // относиться к объявлению или не относиться.
-    @JoinColumn(name = "ads_id", referencedColumnName = "id")//указывает, что поле ads будет связано с полем id класса Ads.
-    @ToString.Exclude//указывает, что поле ads должно быть исключено из метода toString(), чтобы избежать рекурсивного вызова.
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "ads_id", referencedColumnName = "id")
+    @ToString.Exclude
     private Ads ads;
 
-    @OneToOne(optional = true)//указывает, что связь с пользователем является необязательной, то есть изображение может
-    // принадлежать пользователю или не принадлежать.
-    @JoinColumn(referencedColumnName = "id")//указывает, что поле user будет связано с полем id класса User.
-    @ToString.Exclude//указывает, что поле user должно быть исключено из метода toString(), чтобы избежать рекурсивного вызова.
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(referencedColumnName = "id")
+    @ToString.Exclude
     private User user;
 
     @Override

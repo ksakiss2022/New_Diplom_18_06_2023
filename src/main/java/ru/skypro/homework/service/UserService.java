@@ -18,9 +18,6 @@ public interface UserService {
 // представленного объектом `Principal`. Метод возвращает объект `RegisterReq` с обновленной информацией.
     RegisterReq update(RegisterReq user, Principal principal);
 
-//Второй перегруженный метод `update` обновляет информацию о пользователе на основе переданного объекта `RegisterReq`.
-// Метод возвращает объект `RegisterReq` с обновленной информацией.
-    RegisterReq update(RegisterReq user);
 //Метод `save` сохраняет нового пользователя на основе переданного объекта `RegisterReq` и возвращает объект
 // `RegisterReq` с сохраненным пользователем.
     RegisterReq save(RegisterReq newUser);

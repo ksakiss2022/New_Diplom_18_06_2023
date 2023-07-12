@@ -21,6 +21,7 @@ import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -155,8 +156,7 @@ public class UserController {
      * файл изображения пользователя в формате MultipartFile и обновляет аватар пользователя.
      */
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image, @NotNull Authentication authentication ) throws IOException {
         //Получает текущую аутентификацию пользователя из контекста безопасности (SecurityContextHolder).
         log.info("User {} update avatar", authentication.getName());
         //Логгирует информацию о том, что пользователь с именем authentication.getName() обновляет аватар.
@@ -174,7 +174,7 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/{id}/getImage")
-    public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) {
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) throws Exception{
         log.info("Get avatar from user with id " + id);
         // Логгирует информацию о получении аватара пользователя с идентификатором id.
         return ResponseEntity.ok(imageService.getAvatar(id));
@@ -182,4 +182,5 @@ public class UserController {
         // аватара пользователя в виде массива байтов.
     }
 }
+
 

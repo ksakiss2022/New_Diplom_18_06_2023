@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
         log.info("Get all comments for ad: " + id);
         //Затем он преобразует список комментариев в список `CommentDto` с помощью
         // `commentMapper` и возвращает результат.
-        return commentMapper.commentCollectionToCommentDto(comments);
+        return commentMapper.toCommentsListDto(comments);
     }
 
     //    @Override

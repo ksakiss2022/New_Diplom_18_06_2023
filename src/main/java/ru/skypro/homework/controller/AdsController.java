@@ -5,15 +5,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
@@ -35,12 +32,17 @@ import java.util.Collection;
 @Slf4j
 @RestController
 @RequestMapping("/ads")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @CrossOrigin(value = "http://localhost:3000")
 public class AdsController {
-
     private final AdsService adsService;
     private final ImageService imageService;
+
+    public AdsController(AdsService adsService, ImageService imageService) {
+        this.adsService = adsService;
+        this.imageService = imageService;
+    }
+
 
     @Operation(
             operationId = "getAllAds",
@@ -236,20 +238,9 @@ public class AdsController {
      * @return
      */
     @GetMapping(value = "/{id}/getImage")
-    public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) {
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) throws IOException  {
         log.info("Get image from ads with id " + id);
         return ResponseEntity.ok(imageService.getImage(id));
     }
 
-//    @GetMapping("/ads")
-//    public ResponseEntity<Collection<AdsDto>> getAllAds1(@RequestParam(required = false) String title) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-//            Collection<AdsDto> ads = adsService.getAllAdsForAnonymous(title);
-//            return ResponseEntity.ok(ads);
-//        } else {
-//            Collection<AdsDto> ads = adsService.getAllAds(title);
-//            return ResponseEntity.ok(ads);
-//        }
-//    }
 }

@@ -94,7 +94,6 @@ public class AdsServiceImpl implements AdsService {
         //В конце метод возвращает объект AdsDto, который получается из объекта newAds с помощью метода adsMapper.adsToAdsDto().
         return adsMapper.adsToAdsDto(newAds);
     }
-
     @Override
     //Метод `getAds(Integer id)` используется для получения полной информации об объявлении по его ID.
     public AdsDtoFull getAds(Integer id) {
@@ -109,69 +108,36 @@ public class AdsServiceImpl implements AdsService {
         // Для преобразования объявления в объект `AdsDtoFull` используется метод `adsMapper.adsToAdsDtoFull()`.
         // Результат возвращается.
     }
-
-    //    @Override
-//    //Метод `removeAd(Integer id)` используется для удаления объявления по его ID.
-//    public boolean removeAd(Integer id) {
-//        Optional<Ads> adOptional = adsRepository.findById(id);
-//        log.info("Delete ads: " + adOptional);
-//        if (adOptional.isEmpty()) {
-//            log.info("Ad not found");
-//            return false;
-//        }
-//
-//        Ads adsToDelete = adsRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("Ads not found"));
-//        String filePath = adsToDelete.getImage().getFilePath();
-//        File fileToDelete = new File(filePath);
-//        if (fileToDelete.exists()) {
-//            fileToDelete.delete();
-//        }
-//
-//        adsRepository.deleteById(id);
-//        return true;
-//    }
     @Override
     // Метод removeAd(Integer id) используется для удаления объявления по его ID.
     public boolean removeAd(Integer id) {
         // Проверка существования объявления по ID
         Optional<Ads> adOptional = adsRepository.findById(id);
+        log.info("Delete ads: " + adOptional);
         if (adOptional.isEmpty()) {
+            log.info("Ad not found");
             // Если объявление не существует, возвращаем false
             return false;
         }
-
-        // Получение объявления из базы данных
-        Ads ad = adOptional.get();
-
-        // Проверка, является ли текущий авторизованный пользователь владельцем объявления
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentAuthorId = authentication.getName();
-        if (!ad.getAuthorId().equals(currentAuthorId)) {
-            // Если текущий пользователь не является владельцем объявления, возвращаем false
-            return false;
-        }
-
-        // Удаление файла изображения
-        String filePath = ad.getImage().getFilePath();
+        Ads adsToDelete = adsRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Ads not found"));
+        String filePath = adsToDelete.getImage().getFilePath();
         File fileToDelete = new File(filePath);
         if (fileToDelete.exists()) {
             fileToDelete.delete();
         }
-        // Удаление объявления из базы данных
-        adsRepository.deleteById(id);
 
+        adsRepository.deleteById(id);
         return true;
     }
 
     @Override
     //Этот код обновляет объявление (Ads) по заданному id с использованием данных из объекта adsDto.
     public AdsDto updateAds(AdsDto adsDto, Integer id) {
-        //Сначала он преобразует adsDto в объект Ads с помощью adsMapper.
-        Ads ads = adsMapper.adsDtoToAds(adsDto);
+        Ads ads = adsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Ads not found"));
         log.info("Update ads: " + ads);
-        //Затем он сохраняет объект Ads в репозитории adsRepository и возвращает результат обратно в виде объекта AdsDto.
-        return adsMapper.adsToAdsDto(adsRepository.save(ads));
+        adsMapper.updateAds(adsDto, ads);
+      return adsMapper.adsToAdsDto(adsRepository.save(ads));
     }
 
     @Override

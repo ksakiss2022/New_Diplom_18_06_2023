@@ -3,34 +3,46 @@ package ru.skypro.homework.mappers;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
-import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.CommentDto;
 import ru.skypro.homework.model.Comment;
+import ru.skypro.homework.model.Image;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.List;
 
-/**
- * Класс `CommentMapper` определяет ряд методов для преобразования объектов класса `Comment` в объекты класса
- * `CommentDto` и обратно.
- */
-@Mapper(componentModel = "spring")//Аннотация `@Mapper(componentModel = "spring")` указывает, что данный интерфейс
-// является маппером, используемым для преобразования объектов из одного класса в другой.
+@Mapper(componentModel = "spring")
 public interface CommentMapper {
-    //Метод `commentToCommentDto` выполняет преобразование объекта `Comment` в объект `CommentDto`.
     @Mapping(target = "pk", source = "id")
-// Аннотация `@Mapping` указывает, что поле `id` объекта `Comment` должно
-    // быть преобразовано в поле `pk` объекта `CommentDto`.
+    @Mapping(source = "authorId.id", target = "author")
+    @Mapping(target = "createdAt", expression = "java(mapLocalDateTimeToUnixTime(comment.getCreatedAt()))")
+    @Mapping(target = "authorFirstName", source = "authorId.firstName")
+    @Mapping(target = "authorLastName", source = "authorId.lastName")
+    @Mapping(target = "authorImage", expression = "java(image(comment))")
     CommentDto commentToCommentDto(Comment comment);
 
-    //Метод `commentDtoToComment` выполняет обратное преобразование, преобразуя объект `CommentDto` в объект `Comment`.
+    default String image(Comment comment) {
+        int id = comment.getAuthorId().getId();
+        Image filePath = comment.getAuthorId().getAvatar();
+        if (filePath == null) {
+            return null;
+        }
+        return "/users/" + id + "/image";
+    }
+
     @InheritInverseConfiguration
-// Аннотация `@InheritInverseConfiguration` указывает, что обратное преобразование
-    // должно быть выполнено с использованием тех же настроек, что и прямое преобразование.
+    @Mapping(target = "createdAt", expression = "java(mapUnixTimeToLocalDateTime(commentDto.getCreatedAt()))")
     Comment commentDtoToComment(CommentDto commentDto);
 
-    //Метод `commentCollectionToCommentDto` преобразует коллекцию объектов `Comment` в коллекцию объектов `CommentDto`.
-    Collection<CommentDto> commentCollectionToCommentDto(Collection<Comment> commentCollection);
-    //Этот метод не требует явного преобразования полей, так как он использует тот же маппер для преобразования отдельных объектов.
+    default long mapLocalDateTimeToUnixTime(LocalDateTime dateTime) {
+        return dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+    }
+
+    default LocalDateTime mapUnixTimeToLocalDateTime(long unixTime) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(unixTime), ZoneOffset.ofHours(-3));
+    }
+
+    List<CommentDto> toCommentsListDto(Collection<Comment> commentCollection);
 }
