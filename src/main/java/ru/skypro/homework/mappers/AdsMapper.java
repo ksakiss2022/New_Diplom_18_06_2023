@@ -1,14 +1,16 @@
 package ru.skypro.homework.mappers;
 
-import org.mapstruct.*;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.AdsDtoFull;
 import ru.skypro.homework.model.Ads;
 
 import java.util.Collection;
 
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface AdsMapper {
 
     @Mapping(source = "id", target = "pk")
@@ -33,12 +35,12 @@ public interface AdsMapper {
 
     @InheritInverseConfiguration
     @Mapping(target = "image", ignore = true)
-    @Mapping(target = "authorId.id", source = "author")
-    @Mapping(target = "comments", ignore = true)
+    @Mapping(target = "authorId", ignore = true)
+    @Mapping(target = "description", ignore = true)
     Ads adsDtoToAds(AdsDto adsDto);
+
+    Collection<AdsDto> adsCollectionToAdsDto(Collection<Ads> adsCollection);
 
     @Mapping(target = "image", expression = "java(ads.getImage())")
     void updateAds(AdsDto adsDto, @MappingTarget Ads ads);
-
-    Collection<AdsDto> adsCollectionToAdsDto(Collection<Ads> adsCollection);
 }

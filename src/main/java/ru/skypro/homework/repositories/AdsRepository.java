@@ -9,23 +9,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-/**
- *
- Класс AdsRepository является интерфейсом и представляет собой репозиторий для работы с объявлениями (Ads). Он расширяет
- интерфейс JpaRepository и указывает класс Ads в качестве сущности, а тип данных Integer в качестве идентификатора.
- */
 public interface AdsRepository extends JpaRepository<Ads, Integer> {
     @NonNull
-    List<Ads> findAll();//возвращает все объявления.
+    List<Ads> findAll();
 
-    Optional<Ads> findById(Integer id);//возвращает объявление по заданному идентификатору.
+    Optional<Ads> findById(Integer id);
 
-    void deleteById(Integer id);//удаляет объявление по заданному идентификатору.
+    void deleteById(Integer id);
 
-    Collection<Ads> findAllByAuthorId(User authorId);//возвращает все объявления, в которых указан заданный автор.
+    Collection<Ads> findAllByAuthorId(User authorId);
 
 
-    Collection<Ads> findByTitleLike(String title);//возвращает объявления, у которых заголовок содержит заданную строку
-    // (поиск с учетом подстроки).
-
+    Collection<Ads> findByTitleLike(String title);
 }

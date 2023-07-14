@@ -20,11 +20,6 @@ import ru.skypro.homework.service.UserService;
 
 import static ru.skypro.homework.dto.Role.USER;
 
-/**
- * Класс AuthController является контроллером, который отвечает за обработку HTTP-запросов,
- * связанных с аутентификацией и авторизацией пользователей. Он содержит два метода,
- * которые позволяют пользователю проходить процесс регистрации и авторизационного входа.
- */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -48,12 +43,6 @@ public class AuthController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }
     )
-    /**
-     *  login: Метод для выполнения авторизационного входа пользователя. Принимает объект LoginReq,
-     *  содержащий имя пользователя и пароль. Возвращает ResponseEntity без тела ответа.
-     *  Если авторизационный вход успешный, возвращается статус OK (200). В случае, если имя
-     *  пользователя или пароль неправильные, возвращается статус UNAUTHORIZED (401).
-     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReq req) {
         if (authService.login(req.getUsername(), req.getPassword())) {
@@ -74,13 +63,6 @@ public class AuthController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
-    /**
-     * register: Метод для регистрации нового пользователя. Принимает объект RegisterReq,
-     * содержащий информацию о новом пользователе, такую как имя, пароль и роль.
-     * Если роль не указана, по умолчанию устанавливается роль USER. Возвращает ResponseEntity
-     * без тела ответа. Если регистрация успешная, возвращается статус CREATED (201).
-     * Если регистрация не удалась, возвращается статус FORBIDDEN (403).
-     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterReq req) {
         Role role = req.getRole() == null ? USER : req.getRole();
