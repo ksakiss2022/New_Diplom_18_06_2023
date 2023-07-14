@@ -13,7 +13,10 @@ import java.util.Collection;
 
 public interface AdsService {
 
-    Iterable<AdsDto> getAllAds(String title);
+    //  Iterable<AdsDto> getAllAds(String title);
+    /////
+    Collection<AdsDto> getAllAds(String title);
+    /////
 
     AdsDto addAd(AdsDto adsDto, MultipartFile image, Authentication authentication) throws IOException;
 

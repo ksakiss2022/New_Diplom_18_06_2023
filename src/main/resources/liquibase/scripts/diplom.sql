@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset skorobeynikova:1
+-- changeset skorobeynikova:2
 
 
 CREATE TABLE IF NOT EXISTS ads (
