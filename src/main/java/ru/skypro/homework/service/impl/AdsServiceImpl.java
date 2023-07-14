@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,10 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public Collection<AdsDto> getAllAds(String title) {
-        if (!isEmpty(title)) {
+      //  if (!isEmpty(title)) {
+        //////
+        if (StringUtils.isNotEmpty(title)) {
+            ///////
             Collection <Ads> ads = adsRepository.findByTitleLike(title);
             log.info("Get ads with title: " + title);
             return adsMapper.adsCollectionToAdsDto(ads);
@@ -46,11 +50,13 @@ public class AdsServiceImpl implements AdsService {
         log.info("Get all ads: " + ads);
         return adsMapper.adsCollectionToAdsDto(ads);
     }
-
-    @Override
+     @Override
     public AdsDto addAd(AdsDto adsDto, MultipartFile image, Authentication authentication) throws IOException {
         Ads newAds = adsMapper.adsDtoToAds(adsDto);
         newAds.setAuthorId(userRepository.findUserByUsername(authentication.getName()));
+        ///////
+        newAds.setDescription(adsDto.getDescription()); // Установка значения description
+        //////
         adsRepository.save(newAds);
         log.info("Save ads: " + newAds);
         if (image != null) {

@@ -2,6 +2,7 @@ package ru.skypro.homework.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,7 +29,9 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @Slf4j
 @RequiredArgsConstructor
 public class ImageService {
-    private final ImageRepository imageRepository;
+    @Autowired
+    private ImageRepository imageRepository;
+   // private final ImageRepository imageRepository;
     private final AdsRepository adsRepository;
     private final UserRepository userRepository;
     @Value("${Image.dir.path}")
@@ -51,32 +54,50 @@ public class ImageService {
         return saveImageAndGetBytes(file, imageToSave);
     }
 
-    public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
-        Integer id = userRepository.findUserByUsername(email).getId();
-        log.info("Was invoked method to upload photo to user with id {}", id);
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
-        if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("User not found");
-        }
-
-        User user = userRepository.findById(id).get();
-
-        Image imageToSave = imageRepository.findByUser(user);
-        if (imageToSave == null) {
-            imageToSave = new Image();
-        } else {
-            String filePath = user.getAvatar().getFilePath();
-            File fileToDelete = new File(filePath);
-            if (fileToDelete.exists()) {
-                fileToDelete.delete();
-            }
-        }
-        imageToSave.setUser(user);
-        return saveImageAndGetBytes(file, imageToSave);
+//    public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
+//        Integer id = userRepository.findUserByUsername(email).getId();
+//        log.info("Was invoked method to upload photo to user with id {}", id);
+//        if (file.isEmpty()) {
+//            throw new IllegalArgumentException("File is empty");
+//        }
+//        if (!userRepository.existsById(id)) {
+//            throw new IllegalArgumentException("User not found");
+//        }
+//
+//        User user = userRepository.findById(id).get();
+//
+//        Image imageToSave = imageRepository.findByUser(user);
+//        if (imageToSave == null) {
+//            imageToSave = new Image();
+//        } else {
+//            String filePath = user.getAvatar().getFilePath();
+//            File fileToDelete = new File(filePath);
+//            if (fileToDelete.exists()) {
+//                fileToDelete.delete();
+//            }
+//        }
+//        imageToSave.setUser(user);
+//        return saveImageAndGetBytes(file, imageToSave);
+//    }
+public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
+    User user = userRepository.findUserByEmail(email);
+    if (user == null) {
+        throw new IllegalArgumentException("User not found");
     }
 
+    Image imageToSave = user.getAvatar();
+    if (imageToSave == null) {
+        imageToSave = new Image();
+    } else {
+        String filePath = imageToSave.getFilePath();
+        File fileToDelete = new File(filePath);
+        if (fileToDelete.exists()) {
+            fileToDelete.delete();
+        }
+    }
+    imageToSave.setUser(user);
+    return saveImageAndGetBytes(file, imageToSave);
+}
     private byte[] saveImageAndGetBytes(MultipartFile file, Image imageToSave) throws IOException {
         imageToSave.setPreview(file.getBytes());
         imageToSave.setMediaType(file.getContentType());

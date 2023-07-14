@@ -28,11 +28,13 @@ public class AdsController {
     private final AdsService adsService;
     private final ImageService imageService;
 
+    //Метод выполняет GET-запрос для получения списка всех объявлений.
     @GetMapping
     public ResponseEntity<Iterable<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
         return ResponseEntity.ok(adsService.getAllAds(title));
     }
 
+    // Метод `addAd` предназначен для добавления рекламного объявления.
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAd(Authentication authentication,
                                         @RequestPart("image") MultipartFile image,
@@ -41,6 +43,7 @@ public class AdsController {
         return ResponseEntity.ok(adsService.addAd(properties, image, authentication));
     }
 
+    //для получения полных данных об объявлении по его идентификатору.
     @GetMapping("/{id}")
     public ResponseEntity<AdsDtoFull> getAds(@Parameter(description = "Id объявления") @PathVariable Integer id) {
         log.info("Get ads: " + id);
@@ -58,11 +61,13 @@ public class AdsController {
         }
     }
 
+    // Метод выполняет PATCH-запрос на обновление данных объявления.
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@RequestBody AdsDto ads, @PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(adsService.updateAds(ads, id));
     }
 
+    //Этот метод выполняет GET-запрос для получения списка всех объявлений авторизованного пользователя.
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapper<AdsDto>> getMe(@NotNull Authentication authentication) {
         log.info("Get me: " + authentication.getName());
@@ -70,12 +75,14 @@ public class AdsController {
         return ResponseEntity.ok(ads);
     }
 
+    //Этот метод выполняет PATCH-запрос на обновление изображения объявления с указанным идентификатором.
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
                                               @RequestParam("image") MultipartFile image) throws IOException {
         return ResponseEntity.status(HttpStatus.OK).body(adsService.updateImage(id, image));
     }
 
+    //Этот метод выполняет GET-запрос для получения изображения объявления с указанным идентификатором.
     @GetMapping(value = "/{id}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) throws IOException {
         log.info("Get image from ads with id " + id);

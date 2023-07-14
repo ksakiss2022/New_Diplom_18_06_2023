@@ -13,4 +13,6 @@ public class AdsDto {
     private BigDecimal price;
     private String title;
 
-}
+    ///////////
+    private String description;
+   }
