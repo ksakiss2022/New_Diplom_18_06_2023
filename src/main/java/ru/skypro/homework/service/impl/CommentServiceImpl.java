@@ -13,8 +13,9 @@ import ru.skypro.homework.repositories.CommentRepository;
 import ru.skypro.homework.repositories.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
     public Collection<CommentDto> getComments(Integer id) {
         Collection<Comment> comments = commentRepository.findCommentsByAds_Id(id);
         log.info("Get all comments for ad: " + id);
-        return commentMapper.commentCollectionToCommentDto(comments);
+        return commentMapper.toCommentsListDto(comments);
     }
 
     @Override
@@ -43,6 +44,7 @@ public class CommentServiceImpl implements CommentService {
         if (!adsRepository.existsById(id)) {
             throw new IllegalArgumentException("Ad not found");
         }
+        commentDto.setCreatedAt(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
         Comment newComment = commentMapper.commentDtoToComment(commentDto);
         log.info("Save comment: " + newComment);
         newComment.setAds(adsRepository.findById(id).orElseThrow(()
@@ -64,12 +66,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto updateComment(Integer adId, CommentDto commentDto, Integer id, Authentication authentication) {
+        log.info("Update comment: " + commentDto);
         if (!adsRepository.existsById(adId)) {
             throw new IllegalArgumentException("Ad not found");
         }
-        Comment comment = commentMapper.commentDtoToComment(commentDto);
-        comment.setAuthorId(userRepository.findUserByUsername(authentication.getName()));
-        log.info("Update comment: " + comment);
-        return commentMapper.commentToCommentDto(commentRepository.save(comment));
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Comment not found"));
+        comment.setText(commentDto.getText());
+        commentRepository.save(comment);
+        return commentMapper.commentToCommentDto(comment);
     }
 }
