@@ -9,10 +9,15 @@ import ru.skypro.homework.model.User;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserMapper {
-
-
-    @Mapping(target = "image", expression = "java(user.getAvatar() != null ? user.getAvatar().getPreview().toString() : null)")
+    @Mapping(target = "image", expression = "java(getImage(user))")
     UserDto userToUserDto(User user);
+
+    default String getImage(User user) {
+        if (user.getAvatar() == null) {
+            return null;
+        }
+        return "/users/" + user.getId() + "/getImage";
+    }
 
     @Mapping(target = "avatar", ignore = true)
     @Mapping(target = "role", ignore = true)

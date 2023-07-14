@@ -1,11 +1,12 @@
 package ru.skypro.homework.model;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Getter
@@ -18,29 +19,31 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String filePath;
+    private long fileSize;
     private String mediaType;
     @Lob
     private byte[] preview;
     @OneToOne(optional = true)
     @JoinColumn(name = "ads_id", referencedColumnName = "id")
+    @ToString.Exclude
     private Ads ads;
 
     @OneToOne(optional = true)
     @JoinColumn(referencedColumnName = "id")
+    @ToString.Exclude
     private User user;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Image image = (Image) o;
-        return id.equals(image.id) && mediaType.equals(image.mediaType) && Arrays.equals(preview, image.preview) && ads.equals(image.ads) && user.equals(image.user);
+        return getId() != null && Objects.equals(getId(), image.getId());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, mediaType, ads, user);
-        result = 31 * result + Arrays.hashCode(preview);
-        return result;
+        return getClass().hashCode();
     }
 }
