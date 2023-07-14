@@ -1,10 +1,13 @@
 package ru.skypro.homework.model;
+
 import lombok.*;
 import org.hibernate.Hibernate;
 import ru.skypro.homework.dto.Role;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
+
 @Entity
 @Getter
 @Setter
@@ -26,6 +29,7 @@ public class User {
     @OneToOne(mappedBy = "user")
     @ToString.Exclude
     private Image avatar;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -33,6 +37,7 @@ public class User {
         User user = (User) o;
         return getId() != null && Objects.equals(getId(), user.getId());
     }
+
     @Override
     public int hashCode() {
         return getClass().hashCode();

@@ -1,6 +1,5 @@
 package ru.skypro.homework.service.impl;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +16,7 @@ import ru.skypro.homework.service.CommentService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
+
 @Service
 @Transactional
 @Slf4j
@@ -28,14 +28,10 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
-    public Comment findCommentById(Integer id) {
-        return null;
-    }
-
-    @Override
     public Iterable<CommentDto> getComments() {
         return null;
     }
+
     @Override
     public Collection<CommentDto> getComments(Integer id) {
         Collection<Comment> comments = commentRepository.findCommentsByAds_Id(id);
@@ -57,6 +53,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(newComment);
         return commentMapper.commentToCommentDto(newComment);
     }
+
     @Override
     public boolean deleteComment(Integer adId, Integer id) {
         if (!adsRepository.existsById(adId)) {

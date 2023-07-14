@@ -26,11 +26,15 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @Transactional
 @Slf4j
 @RequiredArgsConstructor
+
+
 public class AdsServiceImpl implements AdsService {
+
     private final AdsRepository adsRepository;
     private final ImageService imageService;
     private final UserRepository userRepository;
     private final AdsMapper adsMapper;
+
     @Override
     public Collection<AdsDto> getAllAds(String title) {
         if (!isEmpty(title)) {
@@ -42,6 +46,7 @@ public class AdsServiceImpl implements AdsService {
         log.info("Get all ads: " + ads);
         return adsMapper.adsCollectionToAdsDto(ads);
     }
+
     @Override
     public AdsDto addAd(AdsDto adsDto, MultipartFile image, Authentication authentication) throws IOException {
         Ads newAds = adsMapper.adsDtoToAds(adsDto);
@@ -56,6 +61,7 @@ public class AdsServiceImpl implements AdsService {
         }
         return adsMapper.adsToAdsDto(newAds);
     }
+
     @Override
     public AdsDtoFull getAds(Integer id) {
         Ads ads = adsRepository.findById(id).orElseThrow(
@@ -102,6 +108,7 @@ public class AdsServiceImpl implements AdsService {
         log.info("Found ads: " + adsDto);
         return adsDto;
     }
+
     @Override
     public byte[] updateImage(Integer id, MultipartFile image) throws IOException {
         log.info("Update image: " + id);
@@ -110,8 +117,4 @@ public class AdsServiceImpl implements AdsService {
         return image.getBytes();
     }
 
-    @Override
-    public Collection<AdsDto> getAllAdsForAnonymous(String title) {
-        return null;
-    }
 }

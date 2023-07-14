@@ -1,4 +1,5 @@
 package ru.skypro.homework.service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +62,7 @@ public class ImageService {
         }
 
         User user = userRepository.findById(id).get();
+
         Image imageToSave = imageRepository.findByUser(user);
         if (imageToSave == null) {
             imageToSave = new Image();
@@ -84,6 +86,7 @@ public class ImageService {
         imageRepository.save(imageToSave);
         return Files.readAllBytes(Paths.get(path));
     }
+
     public String uploadImage(String name, MultipartFile file) {
         log.debug("Was invoked method to upload image");
 
@@ -115,6 +118,7 @@ public class ImageService {
         }
         return Files.readAllBytes(Paths.get(Objects.requireNonNull(user.get().getAvatar().getFilePath())));
     }
+
     public byte[] getImage(int id) throws IOException { //for AdsMapper
         log.info("Was invoked method to get image from ads with id {}", id);
         Optional<Ads> ads = adsRepository.findById(id);

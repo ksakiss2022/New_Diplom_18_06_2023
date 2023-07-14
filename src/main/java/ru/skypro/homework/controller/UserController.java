@@ -1,4 +1,5 @@
 package ru.skypro.homework.controller;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,10 @@ import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
+
 import java.io.IOException;
 import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequestMapping("/users")
@@ -28,6 +31,7 @@ public class UserController {
     private final ImageService imageService;
 
     private PasswordEncoder passwordEncoder;
+    //Используется для установки нового пароля пользователю.
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPassword,
                                                       Authentication authentication) {
@@ -44,6 +48,7 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
+    //Возвращает информацию о текущем аутентифицированном пользователе.
     @GetMapping("/me")
     public ResponseEntity<Optional<UserDto>> getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -51,12 +56,15 @@ public class UserController {
         Optional<UserDto> user = userService.getUser(authentication.getName());
         return ResponseEntity.ok(user);
     }
+    //Этот метод для обновления данных пользователя и возвращает обновленный объект пользователя в ответе.
     @PatchMapping(value = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RegisterReq> updateUser(@RequestBody RegisterReq user, Authentication authentication) {
         RegisterReq updatedUser = userService.update(user, authentication);
         log.info("User {} update", authentication.getName());
         return ResponseEntity.ok(updatedUser);
     }
+
+    //Этот метод, который содержит логику по сохранению аватаров пользователей.
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -64,6 +72,7 @@ public class UserController {
         imageService.saveAvatar(authentication.getName(), image);
         return ResponseEntity.status(200).build();
     }
+    //Метод, который возвращает изображение (аватар).
     @GetMapping(value = "/{id}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) throws IOException {
         log.info("Get avatar from user with id " + id);

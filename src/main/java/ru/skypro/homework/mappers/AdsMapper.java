@@ -7,7 +7,9 @@ import org.mapstruct.MappingTarget;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.AdsDtoFull;
 import ru.skypro.homework.model.Ads;
+
 import java.util.Collection;
+
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 
@@ -15,6 +17,7 @@ public interface AdsMapper {
     @Mapping(target = "image", expression = "java(getImage(ads))")
     @Mapping(target = "author", expression = "java(ads.getAuthorId().getId())")
     AdsDto adsToAdsDto(Ads ads);
+
     @Mapping(target = "authorFirstName", source = "authorId.firstName")
     @Mapping(target = "authorLastName", source = "authorId.lastName")
     @Mapping(target = "email", source = "authorId.email")
@@ -22,6 +25,7 @@ public interface AdsMapper {
     @Mapping(target = "phone", source = "authorId.phone")
     @Mapping(target = "pk", source = "id")
     AdsDtoFull adsToAdsDtoFull(Ads ads);
+
     default String getImage(Ads ads) {
         if (ads.getImage() == null) {
             return null;

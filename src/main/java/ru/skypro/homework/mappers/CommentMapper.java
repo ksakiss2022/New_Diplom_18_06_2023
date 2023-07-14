@@ -36,6 +36,7 @@ public interface CommentMapper {
     @InheritInverseConfiguration
     @Mapping(target = "createdAt", expression = "java(mapUnixTimeToLocalDateTime(commentDto.getCreatedAt()))")
     Comment commentDtoToComment(CommentDto commentDto);
+
     default long mapLocalDateTimeToUnixTime(LocalDateTime dateTime) {
         return dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
     }

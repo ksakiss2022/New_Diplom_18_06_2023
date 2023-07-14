@@ -24,10 +24,12 @@ public class Comment {
     @JoinColumn(name = "ads_id", nullable = false)
     @ToString.Exclude
     private Ads ads;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
     private User authorId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -35,6 +37,7 @@ public class Comment {
         Comment comment = (Comment) o;
         return getId() != null && Objects.equals(getId(), comment.getId());
     }
+
     @Override
     public int hashCode() {
         return getClass().hashCode();
