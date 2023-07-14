@@ -2,18 +2,14 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-/**
- *
- Класс CommentDto представляет собой класс для передачи информации о комментарии.
- */
-@Data//Аннотация "@Data" является частью проекта Lombok и генерирует стандартные методы,
-// такие как геттеры, сеттеры, методы equals и hashCode, а также метод toString.
+@Data
 public class CommentDto {
 
-    private Integer author;//целочисленное значение, представляющее идентификатор автора комментария.
-    private String authorImage;//строковое значение, представляющее URL изображения автора комментария.
-    private String authorFirstName;//строковое значение, представляющее имя автора комментария.
-    private Long createdAt;// длинное целочисленное значение, представляющее метку времени создания комментария.
-    private Integer pk;//целочисленное значение, представляющее первичный ключ комментария.
-    private String text;//строковое значение, представляющее текст комментария.
+    private Integer author;
+    private String authorImage;
+    private String authorFirstName;
+    private String authorLastName;
+    private Long createdAt;
+    private Integer pk;
+    private String text;
 }

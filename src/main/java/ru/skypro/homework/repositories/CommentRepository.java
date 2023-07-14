@@ -7,17 +7,12 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Класс CommentRepository является интерфейсом и представляет собой репозиторий для работы с комментариями (Comment).
- * Он расширяет интерфейс JpaRepository и указывает класс Comment в качестве сущности, а тип данных Integer в качестве
- * идентификатора.
- */
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @NotNull
-    List<Comment> findAll();//возвращает все комментарии.
+    List<Comment> findAll();
 
-    Collection<Comment> findCommentsByAds_Id(Integer id);//возвращает комментарии по заданному идентификатору объявления.
+    Collection<Comment> findCommentsByAds_Id(Integer id);
 
-    void deleteById(Integer id);// удаляет комментарий по заданному идентификатору.
+    void deleteById(Integer id);
 
 }
