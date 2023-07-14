@@ -3,6 +3,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.model.Ads;
 import ru.skypro.homework.model.Image;
@@ -21,9 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
-/**
- * Класс `ImageService` представляет собой сервис для работы с изображениями в приложении.
- */
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -34,6 +33,48 @@ public class ImageService {
     @Value("${Image.dir.path}")
     private String imageDir;
 
+    public byte[] saveImage(Integer id, MultipartFile file) throws IOException {
+        log.info("Was invoked method to upload photo to ads with id {}", id);
+        Ads ads = adsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Ads not found"));
+        if (isEmpty(file)) {
+            throw new IllegalArgumentException("File is empty");
+        }
+        if (!adsRepository.existsById(id)) {
+            throw new IllegalArgumentException("Ads not found");
+        }
+        Image imageToSave = imageRepository.findByAds(ads);
+        if (imageToSave == null) {
+            imageToSave = new Image();
+        }
+        imageToSave.setAds(ads);
+        return saveImageAndGetBytes(file, imageToSave);
+    }
+
+    public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
+        Integer id = userRepository.findUserByUsername(email).getId();
+        log.info("Was invoked method to upload photo to user with id {}", id);
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        User user = userRepository.findById(id).get();
+        Image imageToSave = imageRepository.findByUser(user);
+        if (imageToSave == null) {
+            imageToSave = new Image();
+        } else {
+            String filePath = user.getAvatar().getFilePath();
+            File fileToDelete = new File(filePath);
+            if (fileToDelete.exists()) {
+                fileToDelete.delete();
+            }
+        }
+        imageToSave.setUser(user);
+        return saveImageAndGetBytes(file, imageToSave);
+    }
+
     private byte[] saveImageAndGetBytes(MultipartFile file, Image imageToSave) throws IOException {
         imageToSave.setPreview(file.getBytes());
         imageToSave.setMediaType(file.getContentType());
@@ -43,12 +84,11 @@ public class ImageService {
         imageRepository.save(imageToSave);
         return Files.readAllBytes(Paths.get(path));
     }
-
     public String uploadImage(String name, MultipartFile file) {
         log.debug("Was invoked method to upload image");
 
-        String extension = Optional.ofNullable(file.getOriginalFilename()).
-                map(s -> s.substring(file.getOriginalFilename().lastIndexOf("."))).
+
+        String extension = Optional.ofNullable(StringUtils.getFilenameExtension(file.getOriginalFilename())).
                 orElse(" ");
 
         Path filePath = Path.of(imageDir, name + extension);
@@ -61,53 +101,6 @@ public class ImageService {
             throw new RuntimeException("Возникла проблема при создании или записи файла или директории.");
         }
         return filePath.toString();
-    }
-    public byte[] saveImage(Integer id, MultipartFile file) throws IOException {
-        log.info("Was invoked method to upload photo to ads with id {}", id);
-        Ads ads = adsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Ads not found"));
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
-        if (!adsRepository.existsById(id)) {
-            throw new IllegalArgumentException("Ads not found");
-        }
-        Image imageToSave = imageRepository.findImageByAds(ads);
-        if (imageToSave == null) {
-            imageToSave = new Image();
-        }
-        imageToSave.setAds(ads);
-        return saveImageAndGetBytes(file, imageToSave);
-
-    }
-
-    //сохраняет аватар пользователя.
-    public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
-        Integer id = userRepository.findUserByUsername(email).getId();
-        log.info("Was invoked method to upload photo to user with id {}", id);
-        if (file.isEmpty()) {
-            //Затем метод проверяет, является ли загруженный файл `file` пустым, и если да, выбрасывает исключение
-            throw new IllegalArgumentException("File is empty");
-        }
-        if (!userRepository.existsById(id)) {
-            //Затем метод проверяет, существует ли пользователь с указанным `id` в репозитории `userRepository`,
-            // и если нет, выбрасывает исключение
-            throw new IllegalArgumentException("User not found");
-        }
-        User user = userRepository.findById(id).get();
-        //Затем метод создает новый объект `Image`, заполняет его данными и сохраняет его в репозитории `imageRepository`.
-        Image imageToSave = imageRepository.findImageByUser(user);
-        if (imageToSave == null) {
-            imageToSave = new Image();
-        } else {
-            String filePath = user.getAvatar().getFilePath();
-            File fileToDelete = new File(filePath);
-            if (fileToDelete.exists()) {
-                fileToDelete.delete();
-            }
-        }
-        imageToSave.setUser(user);
-        return saveImageAndGetBytes(file, imageToSave);
-
     }
 
     public byte[] getAvatar(int id) throws IOException {
@@ -122,7 +115,6 @@ public class ImageService {
         }
         return Files.readAllBytes(Paths.get(Objects.requireNonNull(user.get().getAvatar().getFilePath())));
     }
-
     public byte[] getImage(int id) throws IOException { //for AdsMapper
         log.info("Was invoked method to get image from ads with id {}", id);
         Optional<Ads> ads = adsRepository.findById(id);

@@ -3,6 +3,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import ru.skypro.homework.dto.RegisterReq;
+import ru.skypro.homework.dto.SecurityUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.model.User;
 
@@ -11,7 +12,6 @@ import ru.skypro.homework.model.User;
 public interface UserMapper {
     @Mapping(target = "image", expression = "java(getImage(user))")
     UserDto userToUserDto(User user);
-
     default String getImage(User user) {
         if (user.getAvatar() == null) {
             return null;
@@ -33,5 +33,6 @@ public interface UserMapper {
     @Mapping(target = "password",source = "registerReq.password")
     User updateUserFromRegisterReq(RegisterReq registerReq, User user);
 
+    SecurityUserDto toSecurityDto(User user);
 
 }
