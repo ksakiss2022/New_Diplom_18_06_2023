@@ -37,19 +37,33 @@ public class UserServiceImpl implements UserService {
         return Optional.ofNullable(userDto);
     }
 
-    @Override
-    public RegisterReq update(RegisterReq user, Principal principal) {
-        log.info("Update user: " + principal);
-        User optionalUser = userRepository.findUserByUsername(principal.getName());
-        if (optionalUser == null) {
-            throw new IllegalArgumentException("User not found");
-        }
-        ModelMapper mapper = new ModelMapper();
-        mapper.map(user, optionalUser);
-        userMapper.userToUserDto(userRepository.save(optionalUser));
-        return user;
+//    @Override
+//    public RegisterReq update(RegisterReq user, Principal principal) {
+//        log.info("Update user: " + principal);
+//        User optionalUser = userRepository.findUserByUsername(principal.getName());
+//        if (optionalUser == null) {
+//            throw new IllegalArgumentException("User not found");
+//        }
+//        ModelMapper mapper = new ModelMapper();
+//        mapper.map(user, optionalUser);
+//        userMapper.userToUserDto(userRepository.save(optionalUser));
+//        return user;
+//    }
+@Override
+public RegisterReq update(RegisterReq user, Principal principal) {
+    log.info("Update user: " + principal);
+    User optionalUser = userRepository.findUserByUsername(principal.getName());
+    if (optionalUser == null) {
+        throw new IllegalArgumentException("User not found");
     }
-
+    User updateUser = userMapper.updateUserFromRegisterReq(user, optionalUser);
+    updateUser.setRole(optionalUser.getRole());
+    updateUser.setId(optionalUser.getId());
+    updateUser.setEmail(optionalUser.getEmail());
+    updateUser.setPassword(optionalUser.getPassword());
+    userRepository.save(updateUser);
+    return user;
+}
     @Override
     public RegisterReq update(RegisterReq user) {
         Role role = user.getRole() == null ? USER : user.getRole();
