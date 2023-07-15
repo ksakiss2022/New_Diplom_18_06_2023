@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,7 +51,7 @@ public class AdsController {
         return ResponseEntity.ok(adsService.getAds(id));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeAd(@Parameter @PathVariable Integer id) {
         boolean result = adsService.removeAd(id);
@@ -62,6 +63,7 @@ public class AdsController {
     }
 
     // Метод выполняет PATCH-запрос на обновление данных объявления.
+    @PreAuthorize("hasRole('ADMIN') or @adsServiceImpl.getAds(#id).email == authentication.principal.username")
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@RequestBody AdsDto ads, @PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(adsService.updateAds(ads, id));

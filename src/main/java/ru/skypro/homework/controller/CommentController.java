@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class CommentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.addComment(id, commentDto, authentication));
     }
-
+    @PreAuthorize("hasRole('ADMIN') or @commentServiceImpl.findCommentById(#commentId)?.authorId?.email == authentication.name")
     @DeleteMapping("{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
         boolean result = commentService.deleteComment(adId, commentId);
@@ -44,7 +45,7 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN') or @commentServiceImpl.findCommentById(#commentId).authorId.email == authentication.name")
     @PatchMapping("{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@RequestBody CommentDto commentDto, @PathVariable Integer adId,
                                                     @PathVariable Integer commentId,
