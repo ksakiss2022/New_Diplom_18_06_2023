@@ -16,7 +16,11 @@ public interface AdsMapper {
     @Mapping(source = "id", target = "pk")
     @Mapping(target = "image", expression = "java(getImage(ads))")
     @Mapping(target = "author", expression = "java(ads.getAuthorId().getId())")
+    ///////
+    @Mapping(target = "description", source = "description")
+    //////
     AdsDto adsToAdsDto(Ads ads);
+
 
     @Mapping(target = "authorFirstName", source = "authorId.firstName")
     @Mapping(target = "authorLastName", source = "authorId.lastName")

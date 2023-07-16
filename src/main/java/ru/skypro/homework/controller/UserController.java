@@ -67,15 +67,21 @@ public class UserController {
         log.info("User {} update", authentication.getName());
         return ResponseEntity.ok(updatedUser);
     }
-
+    //PATCH-запрос для обновления изображения пользователя.
+//    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image) throws IOException {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        log.info("User {} update avatar", authentication.getName());
+//        imageService.saveAvatar(authentication.getName(), image);
+//        return ResponseEntity.status(200).build();
+//    }
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<Void> updateUserImage(Authentication authentication, @RequestParam("image") MultipartFile image) throws IOException {
         log.info("User {} update avatar", authentication.getName());
         imageService.saveAvatar(authentication.getName(), image);
         return ResponseEntity.status(200).build();
     }
-
+    //Выполняет GET-запрос для получения изображения (аватара) пользователя по указанному `id`.
     @GetMapping(value = "/{id}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) throws IOException {
         log.info("Get avatar from user with id " + id);
