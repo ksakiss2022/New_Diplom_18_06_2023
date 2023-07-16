@@ -30,9 +30,14 @@ public class AdsController {
     private final ImageService imageService;
 
     //Метод выполняет GET-запрос для получения списка всех объявлений.
+//    @GetMapping
+//    public ResponseEntity<Iterable<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
+//        return ResponseEntity.ok(adsService.getAllAds(title));
+//    }
     @GetMapping
-    public ResponseEntity<Iterable<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
-        return ResponseEntity.ok(adsService.getAllAds(title));
+    public ResponseEntity<ResponseWrapper<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
+        ResponseWrapper<AdsDto> ads = new ResponseWrapper<>(adsService.getAllAds(title));
+        return ResponseEntity.ok(ads);
     }
 
     // Метод `addAd` предназначен для добавления рекламного объявления.
