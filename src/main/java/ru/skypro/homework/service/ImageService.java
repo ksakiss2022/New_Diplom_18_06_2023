@@ -25,18 +25,21 @@ import java.util.UUID;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
+/**
+ * Класс `ImageService` является сервисом, который предоставляет функционал для работы с изображениями.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
-   // private final ImageRepository imageRepository;
     private final AdsRepository adsRepository;
     private final UserRepository userRepository;
     @Value("${Image.dir.path}")
     private String imageDir;
 
+    // сохраняет изображение.
     public byte[] saveImage(Integer id, MultipartFile file) throws IOException {
         log.info("Was invoked method to upload photo to ads with id {}", id);
         Ads ads = adsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Ads not found"));
@@ -54,50 +57,28 @@ public class ImageService {
         return saveImageAndGetBytes(file, imageToSave);
     }
 
-//    public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
-//        Integer id = userRepository.findUserByUsername(email).getId();
-//        log.info("Was invoked method to upload photo to user with id {}", id);
-//        if (file.isEmpty()) {
-//            throw new IllegalArgumentException("File is empty");
-//        }
-//        if (!userRepository.existsById(id)) {
-//            throw new IllegalArgumentException("User not found");
-//        }
-//
-//        User user = userRepository.findById(id).get();
-//
-//        Image imageToSave = imageRepository.findByUser(user);
-//        if (imageToSave == null) {
-//            imageToSave = new Image();
-//        } else {
-//            String filePath = user.getAvatar().getFilePath();
-//            File fileToDelete = new File(filePath);
-//            if (fileToDelete.exists()) {
-//                fileToDelete.delete();
-//            }
-//        }
-//        imageToSave.setUser(user);
-//        return saveImageAndGetBytes(file, imageToSave);
-//    }
-public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
-    User user = userRepository.findUserByEmail(email);
-    if (user == null) {
-        throw new IllegalArgumentException("User not found");
+    //сохраняет аватар пользователя.
+    public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        Image imageToSave = user.getAvatar();
+        if (imageToSave == null) {
+            imageToSave = new Image();
+        } else {
+            String filePath = imageToSave.getFilePath();
+            File fileToDelete = new File(filePath);
+            if (fileToDelete.exists()) {
+                fileToDelete.delete();
+            }
+        }
+        imageToSave.setUser(user);
+        return saveImageAndGetBytes(file, imageToSave);
     }
 
-    Image imageToSave = user.getAvatar();
-    if (imageToSave == null) {
-        imageToSave = new Image();
-    } else {
-        String filePath = imageToSave.getFilePath();
-        File fileToDelete = new File(filePath);
-        if (fileToDelete.exists()) {
-            fileToDelete.delete();
-        }
-    }
-    imageToSave.setUser(user);
-    return saveImageAndGetBytes(file, imageToSave);
-}
+    // приватный метод, который сохраняет изображение и возвращает его в виде массива байт.
     private byte[] saveImageAndGetBytes(MultipartFile file, Image imageToSave) throws IOException {
         imageToSave.setPreview(file.getBytes());
         imageToSave.setMediaType(file.getContentType());
@@ -108,6 +89,7 @@ public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
         return Files.readAllBytes(Paths.get(path));
     }
 
+    //сохраняет файл изображения.
     public String uploadImage(String name, MultipartFile file) {
         log.debug("Was invoked method to upload image");
 
@@ -127,6 +109,7 @@ public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
         return filePath.toString();
     }
 
+    //возвращает аватар пользователя в виде массива байт.
     public byte[] getAvatar(int id) throws IOException {
         log.info("Was invoked method to get avatar from user with id {}", id);
         Optional<User> user = userRepository.findById(id);
@@ -140,6 +123,7 @@ public byte[] saveAvatar(String email, MultipartFile file) throws IOException {
         return Files.readAllBytes(Paths.get(Objects.requireNonNull(user.get().getAvatar().getFilePath())));
     }
 
+    // возвращает изображение объявления в виде массива байт
     public byte[] getImage(int id) throws IOException { //for AdsMapper
         log.info("Was invoked method to get image from ads with id {}", id);
         Optional<Ads> ads = adsRepository.findById(id);

@@ -16,6 +16,7 @@ import java.io.IOException;
 @Component
 public class BasicAuthCorsFilter extends OncePerRequestFilter {
 
+    //переопределяет базовую реализацию и выполняет фильтрацию запросов.
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,

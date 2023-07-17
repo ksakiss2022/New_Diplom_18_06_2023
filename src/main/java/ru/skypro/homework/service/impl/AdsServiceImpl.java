@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
+/**
+ * Класс AdsServiceImpl представляет собой сервис для работы с объявлениями.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -36,13 +38,11 @@ public class AdsServiceImpl implements AdsService {
     private final UserRepository userRepository;
     private final AdsMapper adsMapper;
 
-    @Override
+
+    @Override// получает все объявления из репозитория
     public Collection<AdsDto> getAllAds(String title) {
-      //  if (!isEmpty(title)) {
-        //////
         if (StringUtils.isNotEmpty(title)) {
-            ///////
-            Collection <Ads> ads = adsRepository.findByTitleLike(title);
+            Collection<Ads> ads = adsRepository.findByTitleLike(title);
             log.info("Get ads with title: " + title);
             return adsMapper.adsCollectionToAdsDto(ads);
         }
@@ -50,13 +50,12 @@ public class AdsServiceImpl implements AdsService {
         log.info("Get all ads: " + ads);
         return adsMapper.adsCollectionToAdsDto(ads);
     }
-     @Override
+
+    @Override// добавляет новое объявление в репозиторий.
     public AdsDto addAd(AdsDto adsDto, MultipartFile image, Authentication authentication) throws IOException {
         Ads newAds = adsMapper.adsDtoToAds(adsDto);
         newAds.setAuthorId(userRepository.findUserByUsername(authentication.getName()));
-        ///////
         newAds.setDescription(adsDto.getDescription()); // Установка значения description
-        //////
         adsRepository.save(newAds);
         log.info("Save ads: " + newAds);
         if (image != null) {
@@ -69,6 +68,7 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
+// получает объявление по его идентификатору из репозитория, и, если оно существует, преобразует его в объект AdsDtoFul
     public AdsDtoFull getAds(Integer id) {
         Ads ads = adsRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("Ads not found"));
@@ -76,7 +76,7 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.adsToAdsDtoFull(ads);
     }
 
-    @Override
+    @Override//удаляет объявление по его идентификатору из репозитория
     public boolean removeAd(Integer id) {
         Optional<Ads> adOptional = adsRepository.findById(id);
         log.info("Delete ads: " + adOptional);
@@ -97,7 +97,7 @@ public class AdsServiceImpl implements AdsService {
         return true;
     }
 
-    @Override
+    @Override//обновляет информацию об объявлении по его идентификатору.
     public AdsDto updateAds(AdsDto adsDto, Integer id) {
         Ads ads = adsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Ads not found"));
         log.info("Update ads: " + ads);
@@ -105,22 +105,21 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.adsToAdsDto(adsRepository.save(ads));
     }
 
-    @Override
+    @Override//получает все объявления, созданные пользователем с заданным email, из репозитория.
     public Collection<AdsDto> getMe(String email) {
         log.info("Get ads: " + email);
         User author = userRepository.findUserByUsername(email);
         Collection<Ads> ads = adsRepository.findAllByAuthorId(author);
-        Collection <AdsDto> adsDto = adsMapper.adsCollectionToAdsDto(ads);
+        Collection<AdsDto> adsDto = adsMapper.adsCollectionToAdsDto(ads);
         log.info("Found ads: " + adsDto);
         return adsDto;
     }
 
-    @Override
+    @Override//обновляет изображение для объявления с заданным идентификатором.
     public byte[] updateImage(Integer id, MultipartFile image) throws IOException {
         log.info("Update image: " + id);
         imageService.saveImage(id, image);
         log.info("Photo have been saved");
         return image.getBytes();
     }
-
 }

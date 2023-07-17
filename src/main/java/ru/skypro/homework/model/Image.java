@@ -9,6 +9,9 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * Класс `Image` является сущностью в базе данных и представляет собой изображение, связанное с объявлением или пользователем
+ */
 @Getter
 @Setter
 @ToString
@@ -18,21 +21,21 @@ import java.util.Objects;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String filePath;
-    private long fileSize;
+    private Integer id;//идентификатор изображения
+    private String filePath;//путь к файлу изображения
+    private long fileSize;//размер файла изображения
     private String mediaType;
     @Lob
-    private byte[] preview;
+    private byte[] preview;//превью изображения в виде массива байтов
     @OneToOne(optional = true)
     @JoinColumn(name = "ads_id", referencedColumnName = "id")
     @ToString.Exclude
-    private Ads ads;
+    private Ads ads;//объявление, к которому относится изображение (связано с сущностью `Ads`)
 
     @OneToOne(optional = true)
     @JoinColumn(referencedColumnName = "id")
     @ToString.Exclude
-    private User user;
+    private User user;//пользователь, к которому относится изображение (связан с сущностью `User`)
 
     @Override
     public boolean equals(Object o) {

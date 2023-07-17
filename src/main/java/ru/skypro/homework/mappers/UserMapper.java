@@ -8,6 +8,11 @@ import ru.skypro.homework.dto.SecurityUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.model.User;
 
+/**
+ * класс `UserMapper` является интерфейсом с аннотацией `@Mapper(componentModel = "spring", unmappedTargetPolicy =
+ * ReportingPolicy.ERROR)`, что указывает MapStruct использовать Spring для создания экземпляров маппера и
+ * генерировать ошибку при обнаружении несопоставленных полей целевого класса.
+ */
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserMapper {
@@ -32,7 +37,7 @@ public interface UserMapper {
     @Mapping(target = "firstName", source = "registerReq.firstName")
     @Mapping(target = "lastName", source = "registerReq.lastName")
     @Mapping(target = "phone", source = "registerReq.phone")
-    @Mapping(target = "password",source = "registerReq.password")
+    @Mapping(target = "password", source = "registerReq.password")
     User updateUserFromRegisterReq(RegisterReq registerReq, User user);
 
     SecurityUserDto toSecurityDto(User user);

@@ -5,11 +5,12 @@ import lombok.Data;
 @Data
 public class CommentDto {
 
-    private Integer author;
-    private String authorImage;
-    private String authorFirstName;
-    private String authorLastName;
-    private Long createdAt;
-    private Integer pk;
-    private String text;
+    private Integer author;//представляет автора комментария.
+    private String authorImage;//представляет изображение автора комментария.
+    private String authorFirstName;//представляет имя автора комментария.
+    private String authorLastName;//представляет фамилию автора комментария.
+    private Long createdAt;//представляет дату и время создания комментар
+    private Integer pk;//первичный ключ
+    private String text;//ьексь комментария
+
 }
