@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.naming.AuthenticationException;
 
+/**
+ * В данном случае, класс `AuthExceptionHandler` является `@ControllerAdvice` и предоставляет обработку двух
+ * типов исключений - `AuthenticationException` и `AccessDeniedException`.
+ */
 @ControllerAdvice
 public class AuthExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)

@@ -7,6 +7,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Класс `Comment` является сущностью в базе данных и представляет собой комментарий к объявлению.
+ * Этот класс имеет следующие аннотации:
+ */
 @Entity
 @Getter
 @Setter
@@ -16,19 +20,19 @@ import java.util.Objects;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private LocalDateTime createdAt;
-    private String text;
+    private Integer id;//идентификатор комментария
+    private LocalDateTime createdAt;//дата и время создания комментария
+    private String text;//текст комментария
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ads_id", nullable = false)
     @ToString.Exclude
-    private Ads ads;
+    private Ads ads;//объявление, к которому относится комментарий (связано с сущностью `Ads`)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
-    private User authorId;
+    private User authorId;//автор комментария (связан с сущностью `User`)
 
     @Override
     public boolean equals(Object o) {

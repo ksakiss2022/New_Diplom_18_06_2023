@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 
+/**
+ * Класс CommentServiceImpl представляет собой сервис для работы с комментариями.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -27,19 +30,19 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final CommentMapper commentMapper;
 
-    @Override
+    @Override//получает все комментарии из репозитория
     public Iterable<CommentDto> getComments() {
         return null;
     }
 
-    @Override
+    @Override// получает все комментарии для объявления с заданным идентификатором из репозитория
     public Collection<CommentDto> getComments(Integer id) {
         Collection<Comment> comments = commentRepository.findCommentsByAds_Id(id);
         log.info("Get all comments for ad: " + id);
         return commentMapper.toCommentsListDto(comments);
     }
 
-    @Override
+    @Override//добавляет новый комментарий для объявления с заданным идентификатором в репозиторий
     public CommentDto addComment(Integer id, CommentDto commentDto, Authentication authentication) {
         if (!adsRepository.existsById(id)) {
             throw new IllegalArgumentException("Ad not found");
@@ -54,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToCommentDto(newComment);
     }
 
-    @Override
+    @Override// удаляет комментарий с заданным идентификатором для объявления с заданным идентификатором из репозитория.
     public boolean deleteComment(Integer adId, Integer id) {
         if (!adsRepository.existsById(adId)) {
             return false;
@@ -64,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
         return true;
     }
 
-    @Override
+    @Override// обновляет информацию о комментарии с заданным идентификатором для объявления с заданным идентификатором.
     public CommentDto updateComment(Integer adId, CommentDto commentDto, Integer id, Authentication authentication) {
         log.info("Update comment: " + commentDto);
         if (!adsRepository.existsById(adId)) {

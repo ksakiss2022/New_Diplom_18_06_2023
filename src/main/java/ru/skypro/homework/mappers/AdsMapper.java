@@ -10,15 +10,17 @@ import ru.skypro.homework.model.Ads;
 
 import java.util.Collection;
 
+/**
+ * является интерфейсом с аннотацией `@Mapper(componentModel = "spring")`, что указывает MapStruct использовать
+ * Spring для создания экземпляров маппера.
+ */
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 
     @Mapping(source = "id", target = "pk")
     @Mapping(target = "image", expression = "java(getImage(ads))")
     @Mapping(target = "author", expression = "java(ads.getAuthorId().getId())")
-    ///////
     @Mapping(target = "description", source = "description")
-    //////
     AdsDto adsToAdsDto(Ads ads);
 
 

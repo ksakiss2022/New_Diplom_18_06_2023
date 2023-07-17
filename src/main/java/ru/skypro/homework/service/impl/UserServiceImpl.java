@@ -26,10 +26,9 @@ import static ru.skypro.homework.dto.Role.USER;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
-    //private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @Override
+    @Override// метод для получения пользователя по электронной почте.
     public Optional<UserDto> getUser(String email) {
         log.info("Get user: " + email);
         User user = userRepository.findUserByUsername(email);
@@ -37,34 +36,24 @@ public class UserServiceImpl implements UserService {
         return Optional.ofNullable(userDto);
     }
 
-//    @Override
-//    public RegisterReq update(RegisterReq user, Principal principal) {
-//        log.info("Update user: " + principal);
-//        User optionalUser = userRepository.findUserByUsername(principal.getName());
-//        if (optionalUser == null) {
-//            throw new IllegalArgumentException("User not found");
-//        }
-//        ModelMapper mapper = new ModelMapper();
-//        mapper.map(user, optionalUser);
-//        userMapper.userToUserDto(userRepository.save(optionalUser));
-//        return user;
-//    }
-@Override
-public RegisterReq update(RegisterReq user, Principal principal) {
-    log.info("Update user: " + principal);
-    User optionalUser = userRepository.findUserByUsername(principal.getName());
-    if (optionalUser == null) {
-        throw new IllegalArgumentException("User not found");
+    @Override//: метод для обновления пользователя.
+    public RegisterReq update(RegisterReq user, Principal principal) {
+        log.info("Update user: " + principal);
+        User optionalUser = userRepository.findUserByUsername(principal.getName());
+        if (optionalUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        User updateUser = userMapper.updateUserFromRegisterReq(user, optionalUser);
+        updateUser.setRole(optionalUser.getRole());
+        updateUser.setId(optionalUser.getId());
+        updateUser.setEmail(optionalUser.getEmail());
+        updateUser.setPassword(optionalUser.getPassword());
+        userRepository.save(updateUser);
+        return user;
     }
-    User updateUser = userMapper.updateUserFromRegisterReq(user, optionalUser);
-    updateUser.setRole(optionalUser.getRole());
-    updateUser.setId(optionalUser.getId());
-    updateUser.setEmail(optionalUser.getEmail());
-    updateUser.setPassword(optionalUser.getPassword());
-    userRepository.save(updateUser);
-    return user;
-}
+
     @Override
+// метод для обновления пользователя. Он получает текущего пользователя по имени пользователя из объекта RegisterReq
     public RegisterReq update(RegisterReq user) {
         Role role = user.getRole() == null ? USER : user.getRole();
 
@@ -79,7 +68,7 @@ public RegisterReq update(RegisterReq user, Principal principal) {
         return user;
     }
 
-    @Override
+    @Override//метод для сохранения нового пользователя.
     public RegisterReq save(RegisterReq user) {
         log.info("Save user: " + user);
         User newUser = new User();

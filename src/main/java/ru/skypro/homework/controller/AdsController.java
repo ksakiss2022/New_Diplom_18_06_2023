@@ -19,6 +19,10 @@ import ru.skypro.homework.service.ImageService;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
+/**
+ * Класс `AdsController` является контроллером веб-приложения и отвечает за обработку HTTP-запросов,
+ * связанных с рекламными объявлениями.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/ads")
@@ -29,11 +33,6 @@ public class AdsController {
     private final AdsService adsService;
     private final ImageService imageService;
 
-    //Метод выполняет GET-запрос для получения списка всех объявлений.
-//    @GetMapping
-//    public ResponseEntity<Iterable<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
-//        return ResponseEntity.ok(adsService.getAllAds(title));
-//    }
     @GetMapping
     public ResponseEntity<ResponseWrapper<AdsDto>> getAllAds(@RequestParam(required = false) String title) {
         ResponseWrapper<AdsDto> ads = new ResponseWrapper<>(adsService.getAllAds(title));
