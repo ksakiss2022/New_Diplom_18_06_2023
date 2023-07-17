@@ -14,6 +14,9 @@ import ru.skypro.homework.repositories.UserRepository;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
+/**
+ * Класс AuthServiceImpl реализует интерфейс AuthService и предоставляет функциональность для аутентификации и регистрации пользователей.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 
-    @Override
+    @Override//позволяет пользователю войти в систему
     public boolean login(String userName, String password) {
         if (userRepository.findUserByUsername(userName) == null) {
             log.info("Пользователь с именем {} не найден", userName);
@@ -37,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
         return encoder.matches(password, userDetails.getPassword()); //todo
     }
 
-    @Override
+    @Override// регистрирует нового пользователя.
     public boolean register(RegisterReq registerReq, Role role) {
         if (userRepository.findUserByUsername(registerReq.getUsername()) != null) {
             log.info("Пользователь с именем {} уже существует", registerReq.getUsername());
@@ -63,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
-    @Override
+    @Override// изменяет пароль пользователя.
     public boolean changePassword(NewPasswordDto newPasswordDto, String userName) { //todo
         if (manager.userExists(userName)) {
             String encodedNewPassword = encoder.encode(newPasswordDto.getNewPassword());

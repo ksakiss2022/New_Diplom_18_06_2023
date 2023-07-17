@@ -16,10 +16,13 @@ import ru.skypro.homework.dto.LoginReq;
 import ru.skypro.homework.dto.RegisterReq;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.service.AuthService;
-import ru.skypro.homework.service.UserService;
 
 import static ru.skypro.homework.dto.Role.USER;
 
+/**
+ * Класс `AuthController` является контроллером веб-приложения, который обрабатывает HTTP-запросы,
+ * связанные с авторизацией и регистрацией пользователей
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -27,9 +30,8 @@ import static ru.skypro.homework.dto.Role.USER;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserService userService;
 
-
+    //метод обрабатывает POST-запрос на авторизацию пользователя
     @Operation(
             operationId = "login",
             summary = "Авторизация пользователя",
@@ -52,7 +54,7 @@ public class AuthController {
         }
     }
 
-
+    // метод обрабатывает POST-запрос на регистрацию нового пользователя
     @Operation(
             operationId = "register",
             summary = "Регистрация пользователя",

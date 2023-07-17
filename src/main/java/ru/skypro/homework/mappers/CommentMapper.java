@@ -13,6 +13,10 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * класс `AdsMapper` является интерфейсом с аннотацией `@Mapper(componentModel = "spring")`,
+ * что указывает MapStruct использовать Spring для создания экземпляров маппера.
+ */
 
 @Mapper(componentModel = "spring")
 public interface CommentMapper {

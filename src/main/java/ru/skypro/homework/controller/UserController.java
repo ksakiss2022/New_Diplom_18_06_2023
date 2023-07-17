@@ -1,9 +1,5 @@
 package ru.skypro.homework.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +20,9 @@ import ru.skypro.homework.service.UserService;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * `UserController` - это класс контроллера REST API, который обрабатывает HTTP-запросы, связанные с пользователями.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/users")
@@ -33,9 +32,9 @@ public class UserController {
     private final UserService userService;
     private final AuthService authService;
     private final ImageService imageService;
-
     private PasswordEncoder passwordEncoder;
 
+    //станавливает новый пароль для пользователя.
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPassword,
                                                       Authentication authentication) {
@@ -53,6 +52,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    //возвращает информацию о текущем аутентифицированном пользователе.
     @GetMapping("/me")
     public ResponseEntity<Optional<UserDto>> getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -61,26 +61,22 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // обновляет информацию о текущем пользователе.
     @PatchMapping(value = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RegisterReq> updateUser(@RequestBody RegisterReq user,Authentication authentication) {
+    public ResponseEntity<RegisterReq> updateUser(@RequestBody RegisterReq user, Authentication authentication) {
         RegisterReq updatedUser = userService.update(user, authentication);
         log.info("User {} update", authentication.getName());
         return ResponseEntity.ok(updatedUser);
     }
-    //PATCH-запрос для обновления изображения пользователя.
-//    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image) throws IOException {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        log.info("User {} update avatar", authentication.getName());
-//        imageService.saveAvatar(authentication.getName(), image);
-//        return ResponseEntity.status(200).build();
-//    }
+
+    //обновляет аватар пользователя.
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateUserImage(Authentication authentication, @RequestParam("image") MultipartFile image) throws IOException {
         log.info("User {} update avatar", authentication.getName());
         imageService.saveAvatar(authentication.getName(), image);
         return ResponseEntity.status(200).build();
     }
+
     //Выполняет GET-запрос для получения изображения (аватара) пользователя по указанному `id`.
     @GetMapping(value = "/{id}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") int id) throws IOException {

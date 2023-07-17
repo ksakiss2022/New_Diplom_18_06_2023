@@ -10,6 +10,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * Класс `Ads` является сущностью в базе данных и представляет собой объявление о товаре или услуге.
+ */
 @Entity
 @Getter
 @Setter
@@ -19,19 +22,19 @@ import java.util.Objects;
 public class Ads {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private BigDecimal price;
-    private String title;
-    private String description;
+    private Integer id;//идентификатор объявления
+    private BigDecimal price;//цена товара или услуги, предлагаемого в объявлении
+    private String title;//заголовок объявления
+    private String description;//описание объявления
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",
             referencedColumnName = "id", nullable = false)
-    private User authorId;
+    private User authorId;//автор объявления (связан с сущностью `User`)
 
     @ToString.Exclude
     @OneToOne(mappedBy = "ads", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Image image;
+    private Image image;// изображение, связанное с объявлением (связан с сущностью `Image`)
 
     @Override
     public boolean equals(Object o) {
